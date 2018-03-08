@@ -8,6 +8,7 @@
     <div fxFlex fxLayout fxLayoutAlign="flex-end" fxHide.xs>
         <button *ngIf="!(isAuth$ | async)" mat-button routerLink="/signup">Signup</button>
         <button *ngIf="!(isAuth$ | async)" mat-button routerLink="/login">Login</button>
+        <button mat-button routerLink="/pools">Pools</button>
         <!-- <button *ngIf="isAuth$ | async" mat-button routerLink="/training">Training</button> -->
         <button *ngIf="isAuth$ | async" mat-button (click)="onLogout()">Logout</button>
 

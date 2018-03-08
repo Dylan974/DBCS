@@ -17,13 +17,16 @@ import { environment } from '../environments/environment';
 import { UiService } from './shared/ui.service';
 import { AuthModule } from './auth/auth.module';
 import { reducers } from './app.reducer';
+import { PoolComponent } from './pool/pool.component';
+import { PoolService } from './pool/pool.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     WelcomeComponent,
     HeaderComponent,
-    SidenavListComponent
+    SidenavListComponent,
+    PoolComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +39,7 @@ import { reducers } from './app.reducer';
     AuthModule,
     StoreModule.forRoot(reducers)
   ],
-  providers: [AuthService, UiService],
+  providers: [AuthService, UiService, PoolService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

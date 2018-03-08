@@ -1,0 +1,7 @@
+<mat-tab-group>
+  <mat-tab *ngFor="let pool of pools$ | async" [label]="pool.name">
+    <section class="tab-pool" fxLayout fxLayoutAlign="center">
+      <h1>{{ pool.name }}</h1>
+    </section>
+  </mat-tab>
+</mat-tab-group>
