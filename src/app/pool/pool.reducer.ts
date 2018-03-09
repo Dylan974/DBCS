@@ -3,6 +3,7 @@ import { Action, createFeatureSelector, createSelector } from '@ngrx/store';
 import { PoolActions, SET_POOLS} from './pool.actions';
 import { Pool } from './pool.model';
 import * as fromRoot from '../app.reducer';
+import { Player } from './player.model';
 
 export interface PoolState {
     pools: Pool[];

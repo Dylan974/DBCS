@@ -1,7 +1,54 @@
-<mat-tab-group>
+<section *ngIf="isLoading$ | async" fxLayout="column" fxLayoutAlign="center center">
+  <mat-spinner></mat-spinner>
+</section>
+<mat-tab-group (selectedTabChange)="tabChanged($event)">
   <mat-tab *ngFor="let pool of pools$ | async" [label]="pool.name">
-    <section class="tab-pool" fxLayout fxLayoutAlign="center">
-      <h1>{{ pool.name }}</h1>
+    <section class="tab-pool" fxLayout="column" fxLayoutAlign="center center">
+      <h1 *ngIf="!(isLoading$ | async)">{{ pool.name }}</h1>
+      <!-- <p>{{ pool.id }}</p> -->
+      <button *ngIf="!(isLoading$ | async)" mat-raised-button color="primary" (click)="addPlayerToPool(pool.id)">Add Fighter</button>
     </section>
+    <!-- FILTER -->
+    <div fxLayoutAlign="center center">
+      <mat-form-field *ngIf="!(isLoading$ | async)" fxFlex="40%">
+        <input matInput type="text" (keyup)="doFilter($event.target.value)" placeholder="Filter">
+      </mat-form-field>
+    </div>
+      
+    <!-- TABLE -->
+    <mat-table *ngIf="!(isLoading$ | async)" [dataSource]="dataSource" matSort>
+
+      <!-- NAME -->
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Nom</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
+      </ng-container>
+      <!-- FIGHTS -->
+      <ng-container matColumnDef="nb_fights">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Combats</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.nb_fights | number }} </mat-cell>
+      </ng-container>
+      <!-- WINS -->
+      <ng-container matColumnDef="nb_wins">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Victoires</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.nb_wins | number }} </mat-cell>
+      </ng-container>
+      <!-- LOSES -->
+      <ng-container matColumnDef="nb_loses">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Défaites</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.nb_loses | number }} </mat-cell>
+      </ng-container>
+
+      <!-- TEL -->
+      <ng-container matColumnDef="tel">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Téléphone</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.tel }} </mat-cell>
+      </ng-container>
+    
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+    </mat-table>
+      
+    <mat-paginator #paginator [pageSize]="5" [pageSizeOptions]="[1, 5, 10, 20]"></mat-paginator>
   </mat-tab>
 </mat-tab-group>
