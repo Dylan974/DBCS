@@ -7,10 +7,13 @@
       <h1 *ngIf="!(isLoading$ | async)">{{ pool.name }}</h1>
       <!-- <p>{{ pool.id }}</p> -->
       <div fxLayout="row">
-        <button *ngIf="!(isLoading$ | async)" mat-raised-button color="primary" (click)="addPlayerToPool(pool.id)">Add Fighter</button>
-        <button *ngIf="!(isLoading$ | async)" mat-raised-button color="primary" [disabled]="pool.fights.length == 0" (click)="seeFights(pool.fights, pool.planned_fights)">See Fights</button>
-        <button *ngIf="!(isLoading$ | async)" mat-raised-button color="accent" [disabled]="pool.players.length < 2" (click)="registerFight(pool)">Register Fight</button>
-        <button *ngIf="!(isLoading$ | async)" mat-raised-button color="accent" [disabled]="pool.players.length < 2" (click)="plannedFight(pool)">Plane Fight</button>
+        <button *ngIf="!(isLoading$ | async) && isAuth$ | async" mat-raised-button color="primary" (click)="addPlayerToPool(pool.id)">Add Fighter</button>
+        <button *ngIf="!(isLoading$ | async)" mat-raised-button color="primary" 
+          [disabled]="pool.fights.length == 0 && pool.planned_fights.length == 0" (click)="seeFights(pool)">
+          See Fights
+        </button>
+        <button *ngIf="!(isLoading$ | async) && isAuth$ | async" mat-raised-button color="accent" [disabled]="pool.players.length < 2" (click)="registerFight(pool)">Register Fight</button>
+        <button *ngIf="!(isLoading$ | async) && isAuth$ | async" mat-raised-button color="accent" [disabled]="pool.players.length < 2" (click)="plannedFight(pool)">Plane Fight</button>
       </div>
     </section>
     
@@ -61,6 +64,8 @@
     </mat-table>
       
     <mat-paginator *ngIf="!(isLoading$ | async) && pool.players.length > 0" #paginator [pageSize]="5" [pageSizeOptions]="[1, 3, 5, 10, 20]"></mat-paginator>
+
+    <p *ngIf="!(isLoading$ | async) && pool.players.length == 0">No fighters in the pool</p>
 
   </mat-tab>
 </mat-tab-group>

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Store } from '@ngrx/store';
+import { take } from 'rxjs/operators';
 
 import { User } from './user.model';
 import { AuthData } from './auth-data.model';
@@ -24,10 +25,10 @@ export class AuthService {
         this.afAuth.authState.subscribe(user => {
             if (user) {
                 this.store.dispatch(new Auth.SetAuthenticated());
-                this.router.navigate(['/pools']);
+                this.router.navigate(['/']);
             } else {
                 this.store.dispatch(new Auth.SetUnauthenticated());
-                this.router.navigate(['/login']);
+                this.router.navigate(['/']);
             }
         });
     }

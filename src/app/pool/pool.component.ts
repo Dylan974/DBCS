@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterContentInit, AfterViewInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
@@ -21,22 +21,31 @@ import { PlannedFightComponent } from './planned-fight.component';
   templateUrl: './pool.component.html',
   styleUrls: ['./pool.component.css']
 })
-export class PoolComponent implements OnInit {
+export class PoolComponent implements OnInit, AfterViewInit {
   pools$: Observable<Pool[]>;
   isLoading$: Observable<boolean>;
   displayedColumns = ['name', 'points', 'nb_fights', 'nb_wins', 'nb_loses', 'tel'];
   dataSource = new MatTableDataSource<Player>();
   activePool: string;
+  isAuth$: Observable<boolean>;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   constructor(private poolService: PoolService, private store: Store<fromRoot.State>, private dialog: MatDialog) { }
 
   ngOnInit() {
+    this.isAuth$ = this.store.select(fromRoot.getIsAuth);
     this.isLoading$ = this.store.select(fromRoot.getIsLoading);
     this.pools$ = this.store.select(fromRoot.getPools);
     this.fetchPools();
-    this.dataSource.data = [];
+  }
+
+  ngAfterViewInit() {
+    this.pools$.subscribe((pool: Pool[]) => {
+      if (pool.find(p => p.name === 'Pool 1')) {
+        this.dataSource.data = pool.find(p => p.name === 'Pool 1').players;
+      }
+    });
   }
 
   fetchPools() {
@@ -52,7 +61,8 @@ export class PoolComponent implements OnInit {
   registerFight(pool) {
     const dialogRef = this.dialog.open(RegisterFightComponent, { data: {
       pool,
-      players: pool.players
+      players: pool.players,
+      planned: false
     }});
   }
 
@@ -63,10 +73,10 @@ export class PoolComponent implements OnInit {
     }});
   }
 
-  seeFights(fights, planned_fights) {
+  seeFights(pool) {
     const dialogRef = this.dialog.open(ShowFightsComponent, {
       width: '550px',
-      data: { fights, planned_fights }
+      data: { pool, fights: pool.fights, planned_fights: pool.planned_fights }
     });
   }
 

@@ -90,6 +90,20 @@ export class PoolService {
         return fights;
     }
 
+    private removePlannedFight(fight, fights) {
+        let index = -1;
+        fights.find(f => {
+            if ((f.player1 === fight.player1 || f.player1 === fight.player2)
+                && (f.player2 === fight.player2 || f.player2 === fight.player1) && f.organisateur === fight.organisateur) {
+                    index = fights.indexOf(f, 0);
+            }
+        });
+        if (index > -1) {
+            fights.splice(index, 1);
+        }
+        return fights;
+    }
+
     private getPlayerByName(name: string, players) {
         return players.find(p => {
             if (p.name === name) {
@@ -114,7 +128,14 @@ export class PoolService {
         }
     }
 
-    registerFight(id_pool: string, player1: string, player2: string, score1: number, score2: number, organisateur: string) {
+    registerFight(
+    id_pool: string,
+    player1: string,
+    player2: string,
+    score1: number,
+    score2: number,
+    organisateur: string,
+    planned_fight: boolean) {
         const players = this.getPlayersInPool(id_pool);
         const p1 = this.getPlayerByName(player1, players);
         const p2 = this.getPlayerByName(player2, players);
@@ -142,6 +163,11 @@ export class PoolService {
         fights.push({player1, player2, score1, score2, organisateur, date: new Date()});
         this.db.doc('pools/' + id_pool).update({players});
         this.db.doc('pools/' + id_pool).update({fights});
+        if (planned_fight) {
+            let planned_fights = this.getPlannedFightsInPool(id_pool);
+            planned_fights = this.removePlannedFight({player1, player2, organisateur}, planned_fights);
+            this.db.doc('pools/' + id_pool).update({planned_fights});
+        }
         this.db.collection('fights').add({ ...fights });
     }
 
