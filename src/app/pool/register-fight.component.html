@@ -1,0 +1,35 @@
+<h1 fxLayoutAlign="center center">Register Fight</h1>
+
+<section class="register-fight-form">
+    <form fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="10px" #f="ngForm" (ngSubmit)="onSubmit(f)">
+        <div fxLayout="row" fxLayoutGap="10px">
+            <mat-form-field>
+                <mat-select placeholder="Fighter 1" ngModel name="fighter1" required #nameInput="ngModel">
+                    <mat-option *ngFor="let player of data.players" [value]="player.name">
+                    {{ player.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput type="number" ngModel name="score1" required #nameInput="ngModel" placeholder="Score" value=0>
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="10px">
+            <mat-form-field>
+                <mat-select placeholder="Fighter 2" ngModel name="fighter2" required #nameInput="ngModel">
+                    <mat-option *ngFor="let player of data.players" [value]="player.name">
+                    {{ player.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput type="number" ngModel name="score2" required #nameInput="ngModel" placeholder="Score" value=0>
+            </mat-form-field>
+        </div>
+        <mat-form-field>
+            <input matInput type="text" ngModel name="organisateur" required #nameInput="ngModel" placeholder="organisateur" value="">
+        </mat-form-field>
+        <br/>
+        <button type="submit" mat-raised-button color="primary" [disabled]="!f.valid">Submit</button>
+    </form>
+</section>

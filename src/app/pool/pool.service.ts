@@ -30,7 +30,9 @@ export class PoolService {
                     return {
                         id: doc.payload.doc.id,
                         name : doc.payload.doc.data().name,
-                        players: doc.payload.doc.data().players
+                        players: doc.payload.doc.data().players,
+                        fights: doc.payload.doc.data().fights,
+                        planned_fights: doc.payload.doc.data().planned_fights
                     };
                 });
             })
@@ -64,11 +66,40 @@ export class PoolService {
         this.fbSubs.forEach(sub => sub.unsubscribe());
     }
 
-    addPlayerToPool(id_pool: string, player: Player) {
+    private getPlayersInPool(id_pool: string) {
         let players;
         this.store.select(fromRoot.getPools).pipe(take(1)).subscribe(pool => {
             players = pool.find(p => p.id === id_pool).players;
         });
+        return players;
+    }
+
+    private getFightsInPool(id_pool: string) {
+        let fights;
+        this.store.select(fromRoot.getPools).pipe(take(1)).subscribe(pool => {
+            fights = pool.find(p => p.id === id_pool).fights;
+        });
+        return fights;
+    }
+
+    private getPlannedFightsInPool(id_pool: string) {
+        let fights;
+        this.store.select(fromRoot.getPools).pipe(take(1)).subscribe(pool => {
+            fights = pool.find(p => p.id === id_pool).planned_fights;
+        });
+        return fights;
+    }
+
+    private getPlayerByName(name: string, players) {
+        return players.find(p => {
+            if (p.name === name) {
+                return p;
+            }
+        });
+    }
+
+    addPlayerToPool(id_pool: string, player: Player) {
+        const players = this.getPlayersInPool(id_pool);
         if (this.playersDB.find(p => p.name === player.name)) {
             this.uiService.showSnacbar('Fighter already in another pool.', null, 3000);
         } else if (players.find(p => p.name === player.name)) {
@@ -82,6 +113,46 @@ export class PoolService {
             this.uiService.showSnacbar('Fighter was added in the pool.', null, 3000);
         }
     }
+
+    registerFight(id_pool: string, player1: string, player2: string, score1: number, score2: number, organisateur: string) {
+        const players = this.getPlayersInPool(id_pool);
+        const p1 = this.getPlayerByName(player1, players);
+        const p2 = this.getPlayerByName(player2, players);
+        p1.nb_fights += 1;
+        p2.nb_fights += 1;
+        if (score1 > score2) {
+            p1.nb_wins += 1;
+            p1.points += 1;
+            p2.nb_loses += 1;
+            p2.points -= 1;
+        } else {
+            p2.nb_wins += 1;
+            p2.points += 1;
+            p1.nb_loses += 1;
+            p1.points -= 1;
+        }
+        players.find(p => {
+            if (p.name === p1.name) {
+                p = p1;
+            } else if (p.name === p2.name) {
+                p = p2;
+            }
+        });
+        const fights = this.getFightsInPool(id_pool);
+        fights.push({player1, player2, score1, score2, organisateur, date: new Date()});
+        this.db.doc('pools/' + id_pool).update({players});
+        this.db.doc('pools/' + id_pool).update({fights});
+        this.db.collection('fights').add({ ...fights });
+    }
+
+    plannedFight(id_pool: string, player1: string, player2: string, organisateur: string, date: Date) {
+        const players = this.getPlayersInPool(id_pool);
+        const fights = this.getPlannedFightsInPool(id_pool);
+        fights.push({player1, player2, organisateur, date});
+        this.db.doc('pools/' + id_pool).update({planned_fights: fights});
+    }
+
+
 
     // private addDataToDatabase(exercise: Exercise) {
     //     this.db.collection('finishedExercises').add(exercise);

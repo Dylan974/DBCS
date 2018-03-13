@@ -1,0 +1,37 @@
+<h1 fxLayoutAlign="center center">Plane Fight</h1>
+
+<section class="register-fight-form">
+    <form fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="10px" #f="ngForm" (ngSubmit)="onSubmit(f)">
+        <div fxLayout="row" fxLayoutGap="10px">
+            <mat-form-field>
+                <mat-select placeholder="Fighter 1" ngModel name="fighter1" required #nameInput="ngModel">
+                    <mat-option *ngFor="let player of data.players" [value]="player.name">
+                    {{ player.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-select placeholder="Fighter 2" ngModel name="fighter2" required #nameInput="ngModel">
+                    <mat-option *ngFor="let player of data.players" [value]="player.name">
+                    {{ player.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <mat-form-field>
+            <input matInput type="text" ngModel name="organisateur" required #nameInput="ngModel" placeholder="organisateur" value="">
+        </mat-form-field>
+        <!-- DATE -->
+        <mat-form-field>
+            <input matInput placeholder="Date" [matDatepicker]="picker" [min]="minDate" ngModel name="date" required>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <!-- TIME -->
+        <mat-form-field>
+            <input matInput type="time" ngModel name="time" required #nameInput="ngModel" placeholder="00:00" value="">
+        </mat-form-field>
+        <br/>
+        <button type="submit" mat-raised-button color="primary" [disabled]="!f.valid">Submit</button>
+    </form>
+</section>

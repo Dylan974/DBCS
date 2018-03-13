@@ -1,0 +1,20 @@
+<button mat-icon-button>
+    <mat-icon>clear</mat-icon>
+</button>
+<h1 fxLayoutAlign="center center">Add Fighter</h1>
+<section class="add-player-form">
+    <form fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="10px" #f="ngForm" (ngSubmit)="onSubmit(f)">
+        <mat-form-field>
+            <input type="text" matInput placeholder="name" ngModel name="name" required #nameInput="ngModel">
+            <mat-error *ngIf="nameInput.hasError('required')">Field must not be empty.</mat-error>
+        </mat-form-field>
+        <mat-form-field hintLabel="Should have 10 characters">
+            <input type="text" matInput placeholder="0692123456" ngModel name="tel"
+            required minlength="10" maxlength="10" #telInput="ngModel">
+            <mat-hint align="end">{{ telInput.value?.length}} / 10</mat-hint>
+            <mat-error>Has to be at 10 characters long.</mat-error>
+        </mat-form-field>
+        <br/>
+        <button type="submit" mat-raised-button color="primary" [disabled]="!f.valid">Submit</button>
+    </form>
+</section>
